@@ -1,23 +1,25 @@
 <div class="register-component">
-  <mat-card class="example-card" appearance="outlined">
-    <mat-card-header class="padding-m">
-      <mat-card-title>Cadastro Usuário</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-form-field class="full-width">
-        <mat-label>Nome Completo</mat-label>
-        <input matInput placeholder="Digite seu Nome Completo" />
-      </mat-form-field>
+  <form [formGroup]="form">
+    <mat-card class="example-card" appearance="outlined">
+      <mat-card-header class="padding-m">
+        <mat-card-title>Cadastro Usuário</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field class="full-width">
+          <mat-label>Nome Completo</mat-label>
+          <input matInput formControlName="fullName" placeholder="Digite seu Nome Completo" />
+        </mat-form-field>
 
-      <mat-form-field class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Digite seu Email" />
-      </mat-form-field>
+        <mat-form-field class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Digite seu Email" />
+        </mat-form-field>
 
-      <input-password-field class="full-width"></input-password-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button matButton="outlined" class="full-width">CADASTRAR</button>
-    </mat-card-actions>
-  </mat-card>
+        <input-password-field [control]="passwordControl" class="full-width"></input-password-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button matButton="outlined" class="full-width" (click)="submit()">CADASTRAR</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
 </div>
