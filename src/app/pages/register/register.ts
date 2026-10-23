@@ -1,5 +1,11 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,9 +33,9 @@ export class Register {
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
-      fullName: [''],
-      email: [''],
-      password: [''],
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['' /*Validators.required*/],
     });
   }
 
@@ -38,6 +44,10 @@ export class Register {
   }
 
   submit() {
-    console.log(this.form.value);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched;
+      return;
+    }
+    console.log('Enviou o formulário', this.form.value);
   }
 }
