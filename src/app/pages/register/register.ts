@@ -43,6 +43,28 @@ export class Register {
     return this.form.get('password') as FormControl;
   }
 
+  get fullNameErros(): string | null {
+    const control = this.form.get('fullName');
+    if (control?.hasError('required')) {
+      return 'O nome completo é um campo obrigatório';
+    }
+    if (control?.hasError('minlength')) {
+      return 'Cadastre um nome com pelo menos 3 letras';
+    }
+    return null;
+  }
+
+  get emailErros(): string | null {
+    const control = this.form.get('email');
+    if (control?.hasError('required')) {
+      return 'O email é um campo obrigatório';
+    }
+    if (control?.hasError('email')) {
+      return 'Digite um email válido';
+    }
+    return null;
+  }
+
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched;
