@@ -1,0 +1,53 @@
+.register-component {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.example-card {
+  width: 400px;
+  padding: 20px;
+  box-shadow: none;
+  --mat-card-outlined-container-color: var(--mat-sys-surface);
+  --mat-card-outlined-outline-width: 0;
+}
+
+.example-card button {
+  --mat-button-outlined-outline-color: var(--mat-sys-outline);
+  --mat-button-outlined-outline-width: 1px;
+  --mat-button-outlined-container-shape: 25px;
+  --mat-button-outlined-label-text-color: var(--mat-sys-primary);
+}
+
+.register-component mat-form-field {
+  /* raio nos quatro cantos */
+  --mat-form-field-filled-container-shape: 25px;
+  --mdc-filled-text-field-container-shape: 25px;
+
+  /* fundo cinza */
+  --mat-form-field-filled-container-color: var(--mat-sys-surface-container-highest);
+  --mdc-filled-text-field-container-color: var(--mat-sys-surface-container-highest);
+
+  /* remove a linha de baixo (normal, hover e foco) */
+  --mat-form-field-filled-active-indicator-height: 0;
+  --mat-form-field-filled-focus-active-indicator-height: 0;
+  --mdc-filled-text-field-active-indicator-height: 0;
+  --mdc-filled-text-field-focus-active-indicator-height: 0;
+  --mdc-filled-text-field-hover-active-indicator-height: 0;
+}
+
+/* texto não fica colado na curva */
+.register-component mat-form-field input {
+  padding-left: 8px;
+}
+
+.register-component .mdc-text-field--filled {
+  border-radius: 25px !important;
+}
+
+.error-message {
+  margin-top: -16px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
