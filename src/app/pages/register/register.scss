@@ -46,8 +46,17 @@
   border-radius: 25px !important;
 }
 
-.error-message {
+.register-component .error-message {
   margin-top: -16px;
   margin-bottom: 16px;
   padding-left: 4px;
+}
+
+.register-component .cad-button-content {
+  display: inline-flex;
+  align-items: center;
+
+  mat-spinner {
+    margin-left: 20px;
+  }
 }

@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { RouterState } from '../../../../core/router/router-state';
+import { Subscription } from 'rxjs';
 
 @Component({
   imports: [MatToolbarModule, MatButtonModule, MatIconModule, RouterLink],
@@ -11,24 +12,20 @@ import { filter, Subscription } from 'rxjs';
   styleUrl: './top-menu.scss',
   templateUrl: './top-menu.html',
 })
+
+//TODO: Arrumar o F5, para continuar desabilitado o botao de cadastrar
 export class TopMenu implements OnInit, OnDestroy {
   appLogo = 'assets/logo-agendador-javanauta.png';
 
   rotaAtual: string = '';
   inscricaoRota!: Subscription;
 
-  constructor(private router: Router) {}
+  private routerService = inject(RouterState);
 
   ngOnInit(): void {
-    // estado atual
-    this.rotaAtual = this.router.url;
-
-    // listener de eventos futuro
-    this.inscricaoRota = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((evento: NavigationEnd) => {
-        this.rotaAtual = evento.url;
-      });
+    this.inscricaoRota = this.routerService.rotaAtual$.subscribe((url) => {
+      this.rotaAtual = url;
+    });
   }
 
   ngOnDestroy(): void {
