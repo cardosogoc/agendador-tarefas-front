@@ -26,6 +26,11 @@
 
   --pill-accent: var(--bright-blue);
 
+  /* fundo branco (página, menu e cards) */
+  --mat-sys-surface: #fff;
+  --mat-sys-background: #fff;
+  background-color: #fff;
+
   font-family:
     'Inter',
     -apple-system,
@@ -49,8 +54,8 @@ h1 {
   font-size: 3.125rem;
   color: var(--gray-900);
   font-weight: 500;
-  line-height: 100%;
-  letter-spacing: -0.125rem;
+  line-height: 1.2; /* era 100% */
+  letter-spacing: -0.03em; /* era -0.125rem */
   margin: 0;
   font-family:
     'Inter Tight',
@@ -69,6 +74,7 @@ h1 {
 p {
   margin: 0;
   color: var(--gray-700);
+  line-height: 1.5; /* novo */
 }
 
 main {
