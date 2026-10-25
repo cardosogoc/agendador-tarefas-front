@@ -1,0 +1,31 @@
+footer {
+  background: #e2e2e2;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: rgb(92, 91, 91);
+
+  p {
+    margin: 0 0 0.75rem;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--bright-blue);
+    }
+  }
+}
