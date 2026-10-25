@@ -21,6 +21,7 @@ export class PasswordField {
   hide = signal(true);
 
   @Input({ required: true }) control!: FormControl;
+  @Input() placeholder: string = 'Digite a sua senha';
 
   get passwordErros(): string | null {
     const passwordControl = this.control;
@@ -28,7 +29,7 @@ export class PasswordField {
       return 'Senha é um campo obrigatório';
     }
     if (passwordControl?.hasError('minlength')) {
-      return 'Senha deve possuir no mínimo 6 digitos';
+      return 'Senha deve conter no mínimo 6 digitos';
     }
     return null;
   }

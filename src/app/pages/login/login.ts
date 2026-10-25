@@ -16,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
 import { User, UserLoginPayload } from '../../services/user';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { Auth } from '../../services/auth';
 
 @Component({
   imports: [
@@ -41,6 +42,7 @@ export class Login {
   constructor(
     private formBuilder: FormBuilder,
     private userService: User,
+    private authService: Auth,
     private router: Router,
   ) {
     this.form = this.formBuilder.group({
@@ -85,6 +87,7 @@ export class Login {
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => {
+          this.authService.saveToken(response);
           this.router.navigate(['/']);
         },
         error: (error) => {

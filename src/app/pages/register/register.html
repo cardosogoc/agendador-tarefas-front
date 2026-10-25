@@ -21,7 +21,11 @@
           }
         </mat-form-field>
 
-        <input-password-field [control]="passwordControl" class="full-width"></input-password-field>
+        <input-password-field
+          [placeholder]="'Cadastre a sua senha'"
+          [control]="passwordControl"
+          class="full-width"
+        ></input-password-field>
       </mat-card-content>
       <mat-card-actions>
         <button
