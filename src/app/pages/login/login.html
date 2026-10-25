@@ -1,0 +1,35 @@
+<div class="login-component">
+  <form [formGroup]="form">
+    <mat-card class="example-card" appearance="outlined">
+      <mat-card-header class="padding-m">
+        <mat-card-title>Login de Usuário</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Digite seu Email" />
+          @if (emailErros) {
+            <mat-error>{{ emailErros }}</mat-error>
+          }
+        </mat-form-field>
+        <!-- TODO: A mensagem da senha deve ser dinâmica: Cuidar os demais components que a utilizam -->
+        <input-password-field [control]="passwordControl" class="full-width"></input-password-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          matButton="outlined"
+          class="full-width"
+          (click)="submit()"
+          [disabled]="form.invalid || isLoading"
+        >
+          <span class="cad-button-content">
+            {{ isLoading ? 'Entrando...' : 'Entrar' }}
+            @if (isLoading) {
+              <mat-spinner diameter="20"></mat-spinner>
+            }
+          </span>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

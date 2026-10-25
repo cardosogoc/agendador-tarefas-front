@@ -35,4 +35,8 @@ export class TopMenu implements OnInit, OnDestroy {
   estaNaRotaRegister(): boolean {
     return this.rotaAtual === '/register';
   }
+
+  estaNaRotaLogin(): boolean {
+    return this.rotaAtual === '/login';
+  }
 }

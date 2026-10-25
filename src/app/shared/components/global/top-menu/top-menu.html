@@ -9,7 +9,9 @@
   <a href="" matButton>Preços</a>
   <a href="" matButton>Contatos</a>
   <span class="spacer"></span>
-  <button mat-button class="ent-button">Entrar</button>
+  <button mat-button class="ent-button" [disabled]="estaNaRotaLogin()" routerLink="/login">
+    Entrar
+  </button>
   <button mat-flat-button [disabled]="estaNaRotaRegister()" routerLink="/register">
     Cadastrar-se
   </button>
