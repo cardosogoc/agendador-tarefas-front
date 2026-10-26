@@ -10,7 +10,11 @@ export class Auth {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  getToke(): string | null {
+  getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 }
