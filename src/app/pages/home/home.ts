@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatAnchor, MatButtonModule } from '@angular/material/button';
 import { BidiModule } from '@angular/cdk/bidi';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../services/auth';
 
 @Component({
   imports: [MatAnchor, BidiModule, MatButtonModule, RouterLink],
@@ -11,4 +12,18 @@ import { RouterLink } from '@angular/router';
 })
 export class Home {
   imgHero = 'assets/imagem-hero.svg';
+
+  // constructor(
+  //   private authService: Auth,
+  //   private router: Router,
+  // ) {}
+
+  private authService = inject(Auth);
+  private router = inject(Router);
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/tasks']);
+    }
+  }
 }

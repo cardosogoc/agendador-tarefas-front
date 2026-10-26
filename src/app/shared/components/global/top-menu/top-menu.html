@@ -5,14 +5,26 @@
     </a>
   </span>
 
-  <span class="spacer"></span>
-  <a href="" matButton>Preços</a>
-  <a href="" matButton>Contatos</a>
-  <span class="spacer"></span>
-  <button mat-button class="ent-button" [disabled]="estaNaRotaLogin()" routerLink="/login">
-    Entrar
-  </button>
-  <button mat-flat-button [disabled]="estaNaRotaRegister()" routerLink="/register">
-    Cadastrar-se
-  </button>
+  @if (!estaLogado) {
+    <span class="spacer"></span>
+    <a href="" matButton>Preços</a>
+    <a href="" matButton>Contatos</a>
+    <span class="spacer"></span>
+    <button mat-button class="ent-button" [disabled]="estaNaRotaLogin()" routerLink="/login">
+      Entrar
+    </button>
+    <button mat-flat-button [disabled]="estaNaRotaRegister()" routerLink="/register">
+      Cadastrar-se
+    </button>
+  }
+
+  @if (estaLogado) {
+    <button matButton [matMenuTriggerFor]="menu">
+      <div mat-card-avatar class="user-avatar">{{ pegarInicialUsuario() }}</div>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Perfil</button>
+      <button mat-menu-item (click)="logout()">Sair</button>
+    </mat-menu>
+  }
 </mat-toolbar>

@@ -29,3 +29,17 @@
   border-radius: 0px;
   height: 100%;
 }
+
+.user-avatar {
+  background-color: var(--bright-blue);
+  color: white;
+  font-weight: 600;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
