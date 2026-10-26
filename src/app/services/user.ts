@@ -93,7 +93,9 @@ export class User {
 
     const headers = new HttpHeaders({ Authorization: `${token}` });
 
-    return this.http.get<UserResponse>(`${this.apiUrl}/usuario?email=${email}`, { headers });
+    return this.http
+      .get<UserResponse>(`${this.apiUrl}/usuario?email=${email}`, { headers })
+      .pipe(tap((user) => this.user.set(user)));
   }
 
   getEmailFromToken(token: string): string | null {
