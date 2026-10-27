@@ -23,7 +23,7 @@
       <div mat-card-avatar class="user-avatar">{{ pegarInicialUsuario() }}</div>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Perfil</button>
+      <button mat-menu-item routerLink="/user-data">Perfil</button>
       <button mat-menu-item (click)="logout()">Sair</button>
     </mat-menu>
   }
