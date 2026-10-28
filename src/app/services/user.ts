@@ -196,4 +196,28 @@ export class User {
   setUser(data: UserResponse | null): void {
     this._user.set(data);
   }
+
+  deleteEndereco(id: number, token: string): Observable<any> {
+    const headers = new HttpHeaders({ Authorization: `${token}` });
+
+    return this.http.delete(`${this.apiUrl}/usuario/endereco/${id}`, { headers }).pipe(
+      switchMap(() => this.getUserByEmail(token)),
+      tap((user) => {
+        this.setUser(user);
+        this.authService.saveUser(user);
+      }),
+    );
+  }
+
+  deleteTelefone(id: number, token: string): Observable<any> {
+    const headers = new HttpHeaders({ Authorization: `${token}` });
+
+    return this.http.delete(`${this.apiUrl}/usuario/telefone/${id}`, { headers }).pipe(
+      switchMap(() => this.getUserByEmail(token)),
+      tap((user) => {
+        this.setUser(user);
+        this.authService.saveUser(user);
+      }),
+    );
+  }
 }
