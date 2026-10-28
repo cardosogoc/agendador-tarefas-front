@@ -7,8 +7,8 @@ import { RouterState } from '../../../../core/router/router-state';
 import { Subscription } from 'rxjs';
 import { MatCardAvatar } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
-import { Auth } from '../../../../services/auth';
-import { User } from '../../../../services/user';
+import { Auth } from '../../../../services/AuthService';
+import { User } from '../../../../services/UserService';
 
 @Component({
   imports: [

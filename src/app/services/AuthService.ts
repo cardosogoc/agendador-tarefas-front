@@ -1,6 +1,6 @@
 // MUDOU: removi o import `Service`, que não era usado, e adicionei `signal`
 import { Injectable, signal } from '@angular/core';
-import { UserResponse } from './user';
+import { UserResponse } from './UserService';
 
 @Injectable({
   providedIn: 'root',

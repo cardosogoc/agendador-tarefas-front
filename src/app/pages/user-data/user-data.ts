@@ -1,20 +1,20 @@
 import { ModalDialog } from './../../shared/components/modal-dialog/modal-dialog';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { User, UserResponse } from '../../services/user';
+import { User } from '../../services/UserService';
 import { DialogField } from '../../shared/components/modal-dialog/modal-dialog';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../services/AuthService';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Confirm } from '../../services/confirm';
+import { Confirm } from '../../services/ConfirmService';
 import { filter, switchMap } from 'rxjs';
-import { Toast } from '../../services/toast';
+import { Toast } from '../../services/ToastService';
 
 @Component({
   imports: [
@@ -47,11 +47,6 @@ export class UserData {
 
   //TODO: add mais validations
   cadastrarEndereco() {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     const formConfig: DialogField[] = [
       {
         name: 'cep',
@@ -97,7 +92,7 @@ export class UserData {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.userService.saveEndereco(result, token).subscribe({
+        this.userService.saveEndereco(result).subscribe({
           next: () => this.toast.success('Endereço cadastrado com sucesso'),
           error: () => this.toast.error('Erro ao cadastrar o Endereço'),
         });
@@ -106,11 +101,6 @@ export class UserData {
   }
 
   cadastrarTelefone() {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     const formConfig: DialogField[] = [
       {
         name: 'ddd',
@@ -130,7 +120,7 @@ export class UserData {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.userService.saveTelefone(result, token).subscribe({
+        this.userService.saveTelefone(result).subscribe({
           next: () => this.toast.success('Telefone cadastrado com sucesso'),
           error: () => this.toast.error('Erro ao cadastrar o Telefone'),
         });
@@ -161,11 +151,6 @@ export class UserData {
     estado: string;
     cep: string;
   }) {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     const formConfig: DialogField[] = [
       {
         name: 'cep',
@@ -217,7 +202,7 @@ export class UserData {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.userService.updateEndereco(endereco.id, result, token).subscribe({
+        this.userService.updateEndereco(endereco.id, result).subscribe({
           next: () => this.toast.success('Endereço editado com sucesso'),
           error: () => this.toast.error('Erro ao editar o Endereço'),
         });
@@ -226,11 +211,6 @@ export class UserData {
   }
 
   editarTelefone(telefone: { id: number; ddd: string; numero: string }) {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     const formConfig: DialogField[] = [
       {
         name: 'ddd',
@@ -252,7 +232,7 @@ export class UserData {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.userService.updateTelefone(telefone.id, result, token).subscribe({
+        this.userService.updateTelefone(telefone.id, result).subscribe({
           next: () => this.toast.success('Telefone Editado com Sucesso'),
           error: () => this.toast.error('Erro ao Editar o Telefone'),
         });
@@ -269,11 +249,6 @@ export class UserData {
     estado: string;
     cep: string;
   }) {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     this.confirm
       .ask({
         title: 'Excluir Endereço',
@@ -283,7 +258,7 @@ export class UserData {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.userService.deleteEndereco(endereco.id, token)),
+        switchMap(() => this.userService.deleteEndereco(endereco.id)),
       )
       .subscribe({
         next: () => this.toast.success('Endereço excluído com sucesso'),
@@ -292,11 +267,6 @@ export class UserData {
   }
 
   deletarTelefone(telefone: { id: number; ddd: string; numero: string }) {
-    const token = this.authService.getToken();
-    if (!token) {
-      return;
-    }
-
     this.confirm
       .ask({
         title: 'Excluir telefone',
@@ -306,7 +276,7 @@ export class UserData {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.userService.deleteTelefone(telefone.id, token)),
+        switchMap(() => this.userService.deleteTelefone(telefone.id)),
       )
       .subscribe({
         next: () => this.toast.success('Telefone excluído com sucesso'),
