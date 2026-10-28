@@ -13,10 +13,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { User, UserLoginPayload } from '../../services/user';
+import { User, UserLoginPayload } from '../../services/UserService';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../services/AuthService';
 
 @Component({
   imports: [
@@ -94,7 +94,7 @@ export class Login {
       .subscribe({
         next: (response) => {
           this.authService.saveToken(response);
-          this.userService.getUserByEmail(response).subscribe({
+          this.userService.getUserByEmail().subscribe({
             next: (user) => {
               this.authService.saveUser(user);
             },

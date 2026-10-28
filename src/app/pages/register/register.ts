@@ -12,11 +12,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { PasswordField } from '../../shared/components/password-field/password-field';
-import { User } from '../../services/user';
+import { User } from '../../services/UserService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../services/AuthService';
 
 @Component({
   imports: [
