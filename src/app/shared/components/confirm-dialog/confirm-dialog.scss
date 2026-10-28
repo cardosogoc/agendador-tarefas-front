@@ -1,0 +1,18 @@
+h2[mat-dialog-title] {
+  font-weight: bold;
+}
+
+mat-dialog-content {
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+mat-dialog-actions {
+  gap: 8px;
+}
+
+button[matButton='filled'] {
+  background-color: rgb(5, 70, 255);
+  color: #fff;
+}

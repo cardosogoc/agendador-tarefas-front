@@ -12,6 +12,9 @@ import { Auth } from '../../services/auth';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Confirm } from '../../services/confirm';
+import { filter, switchMap } from 'rxjs';
+import { Toast } from '../../services/toast';
 
 @Component({
   imports: [
@@ -33,6 +36,8 @@ export class UserData {
   private userService = inject(User);
   readonly dialog = inject(MatDialog);
   readonly authService = inject(Auth);
+  private confirm = inject(Confirm);
+  private toast = inject(Toast);
 
   user = this.userService.user;
   form = this.formBuilder.group({
@@ -93,8 +98,8 @@ export class UserData {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.saveEndereco(result, token).subscribe({
-          next: () => console.log('Endereço Cadastrado com Sucesso', result), //TODO: add toast
-          error: () => console.log('Erro ao Cadastrar o Endereço', result), //TODO: add toast
+          next: () => this.toast.success('Endereço cadastrado com sucesso'),
+          error: () => this.toast.error('Erro ao cadastrar o Endereço'),
         });
       }
     });
@@ -126,8 +131,8 @@ export class UserData {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.saveTelefone(result, token).subscribe({
-          next: () => console.log('Telefone Cadastrado com Sucesso', result), //TODO: add toast
-          error: () => console.log('Erro ao Cadastrar o Telefone', result), //TODO: add toast
+          next: () => this.toast.success('Telefone cadastrado com sucesso'),
+          error: () => this.toast.error('Erro ao cadastrar o Telefone'),
         });
       }
     });
@@ -213,8 +218,8 @@ export class UserData {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.updateEndereco(endereco.id, result, token).subscribe({
-          next: () => console.log('Telefone Editado com Sucesso', result), //TODO: add toast
-          error: () => console.log('Erro ao Editar o Telefone', result), //TODO: add toast
+          next: () => this.toast.success('Endereço editado com sucesso'),
+          error: () => this.toast.error('Erro ao editar o Endereço'),
         });
       }
     });
@@ -248,10 +253,64 @@ export class UserData {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.updateTelefone(telefone.id, result, token).subscribe({
-          next: () => console.log('Telefone Editado com Sucesso', result), //TODO: add toast
-          error: () => console.log('Erro ao Editar o Telefone', result), //TODO: add toast
+          next: () => this.toast.success('Telefone Editado com Sucesso'),
+          error: () => this.toast.error('Erro ao Editar o Telefone'),
         });
       }
     });
+  }
+
+  deletarEndereco(endereco: {
+    id: number;
+    rua: string;
+    numero: number;
+    complemento: string;
+    cidade: string;
+    estado: string;
+    cep: string;
+  }) {
+    const token = this.authService.getToken();
+    if (!token) {
+      return;
+    }
+
+    this.confirm
+      .ask({
+        title: 'Excluir Endereço',
+        message: 'Deseja excluir o endereço',
+        highlight: `${endereco.rua}, ${endereco.cidade}, ${endereco.estado}`,
+        confirmLabel: 'Excluir',
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.userService.deleteEndereco(endereco.id, token)),
+      )
+      .subscribe({
+        next: () => this.toast.success('Endereço excluído com sucesso'),
+        error: () => this.toast.error('Erro ao excluir o Endereço'),
+      });
+  }
+
+  deletarTelefone(telefone: { id: number; ddd: string; numero: string }) {
+    const token = this.authService.getToken();
+    if (!token) {
+      return;
+    }
+
+    this.confirm
+      .ask({
+        title: 'Excluir telefone',
+        message: 'Deseja excluir o telefone',
+        highlight: `(${telefone.ddd}) ${telefone.numero}`,
+        confirmLabel: 'Excluir',
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.userService.deleteTelefone(telefone.id, token)),
+      )
+      .subscribe({
+        next: () => this.toast.success('Telefone excluído com sucesso'),
+        error: () => this.toast.error('Erro ao excluir o telefone'),
+      });
   }
 }
