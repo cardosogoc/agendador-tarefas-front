@@ -1,59 +1,129 @@
-# AgendadorTarefas
+# 📅 Agendador de Tarefas — Front-end
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.1.
+Interface web do **Agendador de Tarefas**, desenvolvida em **Angular** com **TypeScript**. O front-end consome diretamente o backend (BFF) em Java e permite que o usuário se cadastre, faça login e gerencie suas tarefas, além de manter seus dados pessoais, endereço e telefone.
 
-## Development server
+> Este repositório contém apenas o **front-end**. O backend (BFF) está em: [bff-agendador-tarefas_recap](https://github.com/cardosogoc/bff-agendador-tarefas_recap)
 
-To start a local development server, run:
+---
+
+## ✨ Funcionalidades
+
+- Cadastro de usuário
+- Login com autenticação via **JWT**
+- Edição dos dados do usuário de forma individual
+- Aba de **endereço** e aba de **telefone**, ambas independentes
+- Cadastro de tarefas
+- Edição de tarefas
+- Exclusão de tarefas (com diálogo de confirmação)
+- Rotas protegidas por **guard** de autenticação
+
+---
+
+## 🛠️ Tecnologias
+
+- [Angular](https://angular.dev/) (v.22)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Angular Material](https://material.angular.io/)
+- Formulários reativos (Reactive Forms)
+- RxJS
+- SCSS
+
+---
+
+
+## ✅ Pré-requisitos
+
+- [Node.js](https://nodejs.org/) (v. 22.12)
+- [Angular CLI](https://angular.dev/tools/cli) instalado globalmente:
 
 ```bash
+npm install -g @angular/cli
+```
+
+- Backend (BFF) em execução (veja a seção abaixo)
+
+---
+
+## 🚀 Como rodar o projeto
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/cardosogoc/agendador-tarefas-front.git
+
+# 2. Entre na pasta do projeto
+cd agendador-tarefas-front
+
+# 3. Instale as dependências
+npm install
+
+# 4. Inicie o servidor de desenvolvimento
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Depois, acesse **http://localhost:4200** no navegador.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🔌 Backend
 
-```bash
-ng generate component component-name
+O front-end se comunica diretamente com o backend (BFF), desenvolvido em Java.
+
+- **Repositório:** [bff-agendador-tarefas_recap](https://github.com/cardosogoc/bff-agendador-tarefas_recap)
+- **Imagem Docker:** [cardosogoc/bff-agendador](https://hub.docker.com/r/cardosogoc/bff-agendador)
+- **Documentação da API (Swagger):** http://localhost:8083/swagger-ui/index.html
+
+> Para o front-end funcionar corretamente, o backend precisa estar rodando localmente na porta **8083**.
+
+---
+
+## 🔐 Autenticação
+
+1. O usuário envia e-mail e senha na tela de login.
+2. O backend valida as credenciais e retorna um **token JWT**.
+3. O token é salvo pelo serviço de autenticação (`AuthService`) e os dados do usuário são carregados em seguida.
+4. As rotas protegidas do front são controladas pelo `auth-guard`, e o backend exige o token nos endpoints protegidos.
+5. Se o usuário já estiver logado ao acessar a tela de login, ele é redirecionado automaticamente para `/tasks`.
+
+---
+
+## 📁 Estrutura do projeto
+
+```text
+src/
+├── app/
+│   ├── core/
+│   │   └── router/            # Estado de rotas
+│   ├── guards/
+│   │   └── auth-guard.ts      # Proteção de rotas autenticadas
+│   ├── pages/
+│   │   ├── home/
+│   │   ├── login/
+│   │   ├── register/
+│   │   ├── tasks/
+│   │   └── user-data/         # Dados do usuário, endereço e telefone
+│   ├── services/              # Serviços (usuário, autenticação, tarefas...)
+│   ├── shared/
+│   │   └── components/        # confirm-dialog, modal-dialog, password-field...
+│   ├── app.config.ts
+│   ├── app.routes.ts
+│   └── app.ts
+├── assets/
+├── index.html
+├── main.ts
+└── styles.scss
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 📌 Status do projeto
 
-## Building
+🚧 **Em fase final.** A maior parte das funcionalidades está concluída; estou realizando alguns ajustes finais.
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 👨‍💻 Autor
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+**Gabriel de Oliveira Cardoso**
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- GitHub: [@cardosogoc](https://github.com/cardosogoc)
+- LinkedIn: [gabriel-cardoso-developer](https://www.linkedin.com/in/gabriel-cardoso-developer/)
