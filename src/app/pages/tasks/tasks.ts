@@ -38,6 +38,17 @@ export class Tasks {
     return { dataFormatada, horarioFormatado };
   }
 
+  dataEventoExibicao(dataEvento: string) {
+    const [data, horario] = dataEvento.split(' ');
+    const [dia, mes, ano] = data.split('-');
+    const [hora, minuto] = horario.split(':');
+
+    const dataString = `${dia}/${mes}/${ano}`;
+    const horarioString = `${hora}:${minuto}`;
+
+    return { dataString, horarioString };
+  }
+
   cadastrarTarefa() {
     const formConfig: DialogField[] = [
       { name: 'nomeTarefa', label: 'Nome da Tarefa' },
