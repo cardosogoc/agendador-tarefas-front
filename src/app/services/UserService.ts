@@ -1,29 +1,19 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable, Service, signal } from '@angular/core';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Injectable, effect, inject, signal } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable, switchMap, tap, throwError } from 'rxjs';
+import { Endereco, Telefone } from '../models/user.models';
 import { Auth } from './AuthService';
 
-interface UserRegisterPayload {
+export type EnderecoPayload = Omit<Endereco, 'id'>;
+export type TelefonePayload = Omit<Telefone, 'id'>;
+
+export interface UserRegisterPayload {
   nome: string;
   email: string;
   senha: string;
-  enderecos?: [
-    {
-      rua: string;
-      numero: number;
-      complemento: string;
-      cidade: string;
-      estado: string;
-      cep: string;
-    },
-  ];
-  telefones?: [
-    {
-      numero: string;
-      ddd: string;
-    },
-  ];
+  enderecos?: EnderecoPayload[];
+  telefones?: TelefonePayload[];
 }
 
 export interface UserLoginPayload {
@@ -34,24 +24,16 @@ export interface UserLoginPayload {
 export interface UserResponse {
   nome: string;
   email: string;
-  enderecos:
-    | {
-        id: number;
-        rua: string;
-        numero: number;
-        complemento: string;
-        cidade: string;
-        estado: string;
-        cep: string;
-      }[]
-    | null;
-  telefones:
-    | {
-        id: number;
-        numero: string;
-        ddd: string;
-      }[]
-    | null;
+  enderecos: Endereco[] | null;
+  telefones: Telefone[] | null;
+}
+
+export interface ViaCepResponse {
+  logradouro: string;
+  complemento: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean;
 }
 
 @Injectable({
@@ -68,10 +50,16 @@ export class User {
 
   constructor() {
     const usuarioSalvo = this.authService.getUser();
-
     if (usuarioSalvo) {
       this.setUser(usuarioSalvo);
     }
+
+    // ao deslogar, limpa o usuário que está em memória
+    effect(() => {
+      if (!this.authService.estaLogado()) {
+        this.setUser(null);
+      }
+    });
   }
 
   private getHeaders(): HttpHeaders {
@@ -89,19 +77,25 @@ export class User {
     });
   }
 
+  /** Busca o usuário logado e guarda no estado e no localStorage. */
   getUserByEmail(): Observable<UserResponse> {
     const token = this.authService.getToken();
     const email = token ? this.getEmailFromToken(token) : null;
 
     if (!email) {
-      throw new Error('Token inválido');
+      return throwError(() => new Error('Token inválido'));
     }
 
     return this.http
       .get<UserResponse>(`${this.apiUrl}/usuario?email=${encodeURIComponent(email)}`, {
         headers: this.getHeaders(),
       })
-      .pipe(tap((user) => this.setUser(user)));
+      .pipe(
+        tap((user) => {
+          this.setUser(user);
+          this.authService.saveUser(user);
+        }),
+      );
   }
 
   getEmailFromToken(token: string): string | null {
@@ -113,83 +107,55 @@ export class User {
     }
   }
 
-  saveEndereco(body: {
-    id: number;
-    rua: string;
-    numero: number;
-    complemento: string;
-    cidade: string;
-    estado: string;
-    cep: string;
-  }): Observable<any> {
-    return this.http
-      .post<UserResponse>(`${this.apiUrl}/usuario/endereco`, body, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
+  getEnderecoByCep(cep: string): Observable<ViaCepResponse> {
+    return this.http.get<ViaCepResponse>(`${this.apiUrl}/usuario/endereco/${cep}`);
   }
 
-  getEnderecoByCep(cep: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/usuario/endereco/${cep}`);
+  // ---------- Endereço ----------
+
+  saveEndereco(body: EnderecoPayload): Observable<UserResponse> {
+    return this.http
+      .post<unknown>(`${this.apiUrl}/usuario/endereco`, body, { headers: this.getHeaders() })
+      .pipe(switchMap(() => this.getUserByEmail()));
   }
 
-  saveTelefone(body: { numero: string; ddd: string }): Observable<any> {
+  updateEndereco(id: number, body: EnderecoPayload): Observable<UserResponse> {
     return this.http
-      .post<UserResponse>(`${this.apiUrl}/usuario/telefone`, body, {
+      .put<unknown>(`${this.apiUrl}/usuario/endereco?id=${id}`, body, {
         headers: this.getHeaders(),
       })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
+      .pipe(switchMap(() => this.getUserByEmail()));
   }
 
-  updateEndereco(
-    id: number,
-    body: {
-      rua: string;
-      numero: number;
-      complemento: string;
-      cidade: string;
-      estado: string;
-      cep: string;
-    },
-  ): Observable<any> {
+  deleteEndereco(id: number): Observable<UserResponse> {
     return this.http
-      .put<UserResponse>(`${this.apiUrl}/usuario/endereco?id=${id}`, body, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
+      .delete<void>(`${this.apiUrl}/usuario/endereco/${id}`, { headers: this.getHeaders() })
+      .pipe(switchMap(() => this.getUserByEmail()));
   }
 
-  updateTelefone(id: number, body: { numero: string; ddd: string }): Observable<any> {
+  // ---------- Telefone ----------
+
+  saveTelefone(body: TelefonePayload): Observable<UserResponse> {
     return this.http
-      .put<UserResponse>(`${this.apiUrl}/usuario/telefone?id=${id}`, body, {
+      .post<unknown>(`${this.apiUrl}/usuario/telefone`, body, { headers: this.getHeaders() })
+      .pipe(switchMap(() => this.getUserByEmail()));
+  }
+
+  updateTelefone(id: number, body: TelefonePayload): Observable<UserResponse> {
+    return this.http
+      .put<unknown>(`${this.apiUrl}/usuario/telefone?id=${id}`, body, {
         headers: this.getHeaders(),
       })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
+      .pipe(switchMap(() => this.getUserByEmail()));
   }
+
+  deleteTelefone(id: number): Observable<UserResponse> {
+    return this.http
+      .delete<void>(`${this.apiUrl}/usuario/telefone/${id}`, { headers: this.getHeaders() })
+      .pipe(switchMap(() => this.getUserByEmail()));
+  }
+
+  // ---------- Estado ----------
 
   getUser(): UserResponse | null {
     return this.user();
@@ -197,33 +163,5 @@ export class User {
 
   setUser(data: UserResponse | null): void {
     this._user.set(data);
-  }
-
-  deleteEndereco(id: number): Observable<UserResponse> {
-    return this.http
-      .delete<void>(`${this.apiUrl}/usuario/endereco/${id}`, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
-  }
-
-  deleteTelefone(id: number): Observable<UserResponse> {
-    return this.http
-      .delete<void>(`${this.apiUrl}/usuario/telefone/${id}`, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        switchMap(() => this.getUserByEmail()),
-        tap((user) => {
-          this.setUser(user);
-          this.authService.saveUser(user);
-        }),
-      );
   }
 }

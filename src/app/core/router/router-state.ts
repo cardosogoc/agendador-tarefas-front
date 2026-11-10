@@ -1,4 +1,4 @@
-import { Injectable, Service } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, filter } from 'rxjs';
 
@@ -6,16 +6,16 @@ import { BehaviorSubject, filter } from 'rxjs';
   providedIn: 'root',
 })
 export class RouterState {
-  private rotaAtualSubject$ = new BehaviorSubject<string>('');
+  private router = inject(Router);
+
+  private rotaAtualSubject$ = new BehaviorSubject<string>(this.router.url);
   public readonly rotaAtual$ = this.rotaAtualSubject$.asObservable();
 
-  constructor(private router: Router) {
-    this.rotaAtualSubject$.next(this.router.url);
-
+  constructor() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((evento: NavigationEnd) => {
-        this.rotaAtualSubject$.next(evento.url);
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((evento) => {
+        this.rotaAtualSubject$.next(evento.urlAfterRedirects);
       });
   }
 }

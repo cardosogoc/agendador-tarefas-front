@@ -18,24 +18,26 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './password-field.html',
 })
 export class PasswordField {
-  hide = signal(true);
+  readonly hide = signal(true);
 
   @Input({ required: true }) control!: FormControl;
-  @Input() placeholder: string = 'Digite a sua senha';
+  @Input() placeholder = 'Digite a sua senha';
 
   get passwordErros(): string | null {
-    const passwordControl = this.control;
-    if (passwordControl?.hasError('required')) {
+    if (this.control.hasError('required')) {
       return 'Senha é um campo obrigatório';
     }
-    if (passwordControl?.hasError('minlength')) {
-      return 'Senha deve conter no mínimo 6 digitos';
+
+    const minlength = this.control.getError('minlength');
+    if (minlength) {
+      return `Senha deve conter no mínimo ${minlength.requiredLength} dígitos`;
     }
+
     return null;
   }
 
-  clickEvent(event: MouseEvent) {
-    this.hide.set(!this.hide());
+  clickEvent(event: MouseEvent): void {
+    this.hide.update((valor) => !valor);
     event.stopPropagation();
   }
 }
