@@ -1,22 +1,21 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import {
-  FormBuilder,
   FormControl,
-  FormGroup,
+  NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PasswordField } from '../../shared/components/password-field/password-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { User, UserLoginPayload } from '../../services/UserService';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs';
+import { PasswordField } from '../../shared/components/password-field/password-field';
+import { User } from '../../services/UserService';
 import { Auth } from '../../services/AuthService';
+import { Toast } from '../../services/ToastService';
 
 @Component({
   imports: [
@@ -24,7 +23,6 @@ import { Auth } from '../../services/AuthService';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     PasswordField,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
@@ -34,76 +32,62 @@ import { Auth } from '../../services/AuthService';
   templateUrl: './login.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class Login {
+export class Login implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private userService = inject(User);
+  private authService = inject(Auth);
+  private router = inject(Router);
+  private toast = inject(Toast);
+
   isLoading = false;
 
-  form: FormGroup<{ email: FormControl<string>; senha: FormControl<string> }>;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private userService: User,
-    private authService: Auth,
-    private router: Router,
-  ) {
-    this.form = this.formBuilder.group({
-      email: this.formBuilder.control('', {
-        validators: [Validators.required, Validators.email],
-        nonNullable: true,
-      }),
-      senha: this.formBuilder.control('', {
-        validators: [Validators.required, Validators.minLength(6)],
-        nonNullable: true,
-      }),
-    });
-  }
+  form = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    senha: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/tasks']);
+      this.router.navigate(['/tasks'], { replaceUrl: true });
     }
   }
 
   get emailErros(): string | null {
-    const control = this.form.get('email');
-    if (control?.hasError('required')) {
+    const control = this.form.controls.email;
+    if (control.hasError('required')) {
       return 'A informação do email é obrigatória';
     }
-    if (control?.hasError('email')) {
+    if (control.hasError('email')) {
       return 'Digite um email válido';
     }
     return null;
   }
 
-  get passwordControl(): FormControl {
-    return this.form.get('senha') as FormControl;
+  get passwordControl(): FormControl<string> {
+    return this.form.controls.senha;
   }
 
-  submit() {
+  submit(): void {
     if (this.form.invalid) {
-      this.form.markAllAsTouched;
+      this.form.markAllAsTouched();
       return;
     }
-
-    const formData = this.form.value as UserLoginPayload;
 
     this.isLoading = true;
 
     this.userService
-      .login(formData)
-      .pipe(finalize(() => (this.isLoading = false)))
+      .login(this.form.getRawValue())
+      .pipe(
+        tap((token) => this.authService.saveToken(token)),
+        switchMap(() => this.userService.getUserByEmail()),
+        finalize(() => (this.isLoading = false)),
+      )
       .subscribe({
-        next: (response) => {
-          this.authService.saveToken(response);
-          this.userService.getUserByEmail().subscribe({
-            next: (user) => {
-              this.authService.saveUser(user);
-            },
-          });
-          this.router.navigate(['/tasks']);
-        },
-        error: (error) => {
-          console.log('Erro ao logar', error);
-        },
+        next: () => this.router.navigate(['/tasks']),
+        error: (err) =>
+          this.toast.error(
+            err.status === 0 ? 'Servidor indisponível. Tente novamente.' : 'E-mail ou senha inválidos',
+          ),
       });
   }
 }

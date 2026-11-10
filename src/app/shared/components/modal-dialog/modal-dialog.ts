@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormGroup, FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   MAT_DIALOG_DATA,
@@ -19,12 +18,13 @@ export interface DialogField {
   name: string;
   label: string;
   value?: string | number | Date;
+  minDate?: Date;
   button?: {
     icon: string;
     callback: (value: string, dialogRef: MatDialogRef<ModalDialog>) => void;
   };
-  type?: 'text' | 'number' | 'date' | 'time' | 'datetime';
-  validators?: any[];
+  type?: 'text' | 'number' | 'date' | 'time';
+  validators?: ValidatorFn[];
 }
 
 interface DialogData {
@@ -36,7 +36,6 @@ interface DialogData {
   imports: [
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,
     MatButtonModule,
     MatDialogActions,
     MatDialogContent,
@@ -46,32 +45,34 @@ interface DialogData {
     MatDatepickerModule,
     MatTimepickerModule,
   ],
-
   selector: 'app-modal-dialog',
   styleUrl: './modal-dialog.scss',
   templateUrl: './modal-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideNativeDateAdapter()],
 })
 export class ModalDialog {
-  readonly FormBuilder = inject(FormBuilder);
-  readonly dialogRef = inject(MatDialogRef<ModalDialog>);
+  private formBuilder = inject(FormBuilder);
+  readonly dialogRef = inject<MatDialogRef<ModalDialog>>(MatDialogRef);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  fields: DialogField[] = this.data.formConfig;
+  readonly fields: DialogField[] = this.data.formConfig;
+
+  readonly form: FormGroup = this.formBuilder.group(this.buildControls());
 
   private buildControls(): Record<string, any> {
     const controls: Record<string, any> = {};
 
     this.fields.forEach((field) => {
-      controls[field.name] = [field.value ?? '', field.validators || null];
+      controls[field.name] = [field.value ?? '', field.validators ?? null];
     });
     return controls;
   }
 
-  form: FormGroup = this.FormBuilder.group(this.buildControls());
-
-  onSave() {
+  onSave(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.dialogRef.close(this.form.value);
   }
 

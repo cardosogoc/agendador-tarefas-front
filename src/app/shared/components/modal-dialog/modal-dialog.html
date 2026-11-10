@@ -5,9 +5,21 @@
       @if (field.type === 'date') {
         <mat-form-field class="full-width">
           <mat-label>{{ field.label }}</mat-label>
-          <input matInput [matDatepicker]="datepicker" [formControlName]="field.name" />
+          <input
+            matInput
+            readonly
+            [matDatepicker]="datepicker"
+            [min]="field.minDate ?? null"
+            [formControlName]="field.name"
+            (click)="datepicker.open()"
+          />
           <mat-datepicker #datepicker />
           <mat-datepicker-toggle [for]="datepicker" matSuffix />
+          @if (form.get(field.name)?.hasError('required')) {
+            <mat-error>Campo obrigatório</mat-error>
+          } @else if (form.get(field.name)?.hasError('matDatepickerMin')) {
+            <mat-error>Escolha hoje ou uma data futura</mat-error>
+          }
         </mat-form-field>
       }
 
@@ -17,6 +29,9 @@
           <input matInput [matTimepicker]="timepicker" [formControlName]="field.name" />
           <mat-timepicker #timepicker />
           <mat-timepicker-toggle [for]="timepicker" matSuffix />
+          @if (form.get(field.name)?.hasError('required')) {
+            <mat-error>Campo obrigatório</mat-error>
+          }
         </mat-form-field>
       }
 
@@ -24,15 +39,20 @@
         <mat-form-field class="full-width">
           <mat-label>{{ field.label }}</mat-label>
           <input matInput [type]="field.type || 'text'" [formControlName]="field.name" />
+          @if (field.button; as botao) {
+            <button
+              type="button"
+              matIconButton
+              matSuffix
+              (click)="botao.callback(form.get(field.name)?.value, dialogRef)"
+            >
+              <mat-icon>{{ botao.icon }}</mat-icon>
+            </button>
+          }
+          @if (form.get(field.name)?.hasError('required')) {
+            <mat-error>Campo obrigatório</mat-error>
+          }
         </mat-form-field>
-      }
-
-      @if (field.button) {
-        <button matIconButton matSuffix>
-          <mat-icon (click)="field.button.callback(form.get(field.name)?.value, dialogRef)">{{
-            field.button.icon
-          }}</mat-icon>
-        </button>
       }
     }
   </form>

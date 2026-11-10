@@ -1,29 +1,23 @@
-import { Component, inject } from '@angular/core';
-import { MatAnchor, MatButtonModule } from '@angular/material/button';
-import { BidiModule } from '@angular/cdk/bidi';
+import { Component, OnInit, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/AuthService';
 
 @Component({
-  imports: [MatAnchor, BidiModule, MatButtonModule, RouterLink],
+  imports: [MatButtonModule, RouterLink],
   selector: 'app-home',
   styleUrl: './home.scss',
   templateUrl: './home.html',
 })
-export class Home {
-  imgHero = 'assets/imagem-hero.svg';
-
-  // constructor(
-  //   private authService: Auth,
-  //   private router: Router,
-  // ) {}
+export class Home implements OnInit {
+  readonly imgHero = 'assets/imagem-hero.svg';
 
   private authService = inject(Auth);
   private router = inject(Router);
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/tasks']);
+      this.router.navigate(['/tasks'], { replaceUrl: true });
     }
   }
 }

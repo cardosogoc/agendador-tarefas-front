@@ -40,3 +40,15 @@ body {
 main {
   min-height: 100vh;
 }
+
+.toast-success {
+  --mat-snack-bar-container-color: #d1e7dd;
+  --mat-snack-bar-supporting-text-color: #0f5132;
+  --mat-snack-bar-button-color: #0f5132;
+}
+
+.toast-error {
+  --mat-snack-bar-container-color: #f8d7da;
+  --mat-snack-bar-supporting-text-color: #842029;
+  --mat-snack-bar-button-color: #842029;
+}

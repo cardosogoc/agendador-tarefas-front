@@ -1,4 +1,3 @@
-// MUDOU: removi o import `Service`, que não era usado, e adicionei `signal`
 import { Injectable, signal } from '@angular/core';
 import { UserResponse } from './UserService';
 
@@ -12,6 +11,14 @@ export class Auth {
   private readonly logado = signal(!!localStorage.getItem(this.TOKEN_KEY));
 
   readonly estaLogado = this.logado.asReadonly();
+
+  constructor() {
+    // token vencido guardado de uma sessão anterior: limpa antes de qualquer guard rodar
+    const token = this.getToken();
+    if (token && this.tokenExpirado(token)) {
+      this.logout();
+    }
+  }
 
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -31,17 +38,32 @@ export class Auth {
     if (!user) {
       return null;
     }
-    return JSON.parse(user) as UserResponse;
+    try {
+      return JSON.parse(user) as UserResponse;
+    } catch {
+      return null;
+    }
   }
 
   isLoggedIn(): boolean {
-    return this.logado();
+    const token = this.getToken();
+    return this.logado() && !!token && !this.tokenExpirado(token);
   }
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    this.logado.set(false);
-
     localStorage.removeItem(this.USER);
+    this.logado.set(false);
+  }
+
+  private tokenExpirado(token: string): boolean {
+    try {
+      const payload = token.replace(/^Bearer\s+/i, '').split('.')[1];
+      const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      const { exp } = JSON.parse(json);
+      return typeof exp === 'number' && exp * 1000 <= Date.now();
+    } catch {
+      return false;
+    }
   }
 }

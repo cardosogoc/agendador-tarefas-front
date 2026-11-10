@@ -15,6 +15,7 @@
   } @else {
     <mat-accordion class="tasks-accordion full-width">
       @for (task of tasks(); track task.id) {
+        @let status = statusExibicao(task.statusNotificacaoEnum);
         <mat-expansion-panel
           class="tasks-exp"
           (opened)="panelOpenState.set(true)"
@@ -27,6 +28,7 @@
               {{ dataEventoExibicao(task.dataEvento).dataString }}
               <mat-icon class="task-icon"> schedule </mat-icon>
               {{ dataEventoExibicao(task.dataEvento).horarioString }}
+              <span class="task-status" [class]="status.classe">{{ status.texto }}</span>
             </mat-panel-description>
             <button matIconButton class="task-action-button" matSuffix (click)="editarTarefa(task)">
               <mat-icon> edit </mat-icon>
@@ -44,6 +46,6 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
-    <button mat-flat-button (click)="cadastrarTarefa()">+ Adcionar Tarefa 📑</button>
+    <button mat-flat-button (click)="cadastrarTarefa()">+ Adicionar Tarefa 📑</button>
   }
 </section>
