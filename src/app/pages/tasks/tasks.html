@@ -13,39 +13,82 @@
       </mat-card-content>
     </mat-card>
   } @else {
+    <div class="tasks-resumo">
+      @for (item of resumo; track item.grupo) {
+        <button
+          type="button"
+          class="resumo-card"
+          [attr.data-grupo]="item.grupo"
+          [class.ativo]="filtro() === item.grupo"
+          [attr.aria-pressed]="filtro() === item.grupo"
+          (click)="alternarFiltro(item.grupo)"
+        >
+          <mat-icon>{{ item.icone }}</mat-icon>
+          <span class="resumo-numero">{{ contagem()[item.grupo] }}</span>
+          <span class="resumo-rotulo">{{ item.rotulo }}</span>
+        </button>
+      }
+    </div>
+
     <mat-accordion class="tasks-accordion full-width">
-      @for (task of tasks(); track task.id) {
-        @let status = statusExibicao(task.statusNotificacaoEnum);
+      @for (task of tarefasVisiveis(); track task.id) {
+        @let status = statusExibicao(task.statusNotificacaoEnum, task.concluida);
         <mat-expansion-panel
           class="tasks-exp"
+          [class.task-concluida]="task.concluida"
           (opened)="panelOpenState.set(true)"
           (closed)="panelOpenState.set(false)"
         >
           <mat-expansion-panel-header>
             <mat-panel-title class="tasks-title"> {{ task.nomeTarefa }} </mat-panel-title>
-            <mat-panel-description>
+            <mat-panel-description class="task-info">
               <mat-icon class="task-icon"> calendar_month </mat-icon>
               {{ dataEventoExibicao(task.dataEvento).dataString }}
               <mat-icon class="task-icon"> schedule </mat-icon>
               {{ dataEventoExibicao(task.dataEvento).horarioString }}
               <span class="task-status" [class]="status.classe">{{ status.texto }}</span>
             </mat-panel-description>
-            <button matIconButton class="task-action-button" matSuffix (click)="editarTarefa(task)">
+
+            @if (!task.concluida || task.podeReabrir) {
+              <button
+                matIconButton
+                class="task-action-button"
+                matSuffix
+                [matTooltip]="task.concluida ? 'Reabrir tarefa' : 'Marcar como concluída'"
+                (click)="alternarConcluida(task); $event.stopPropagation()"
+              >
+                <mat-icon>{{ task.concluida ? 'undo' : 'check_circle' }}</mat-icon>
+              </button>
+            }
+            <button
+              matIconButton
+              class="task-action-button"
+              matSuffix
+              (click)="editarTarefa(task); $event.stopPropagation()"
+            >
               <mat-icon> edit </mat-icon>
             </button>
             <button
               matIconButton
               class="task-action-button"
               matSuffix
-              (click)="deletarTarefa(task)"
+              (click)="deletarTarefa(task); $event.stopPropagation()"
             >
               <mat-icon> delete </mat-icon>
             </button>
           </mat-expansion-panel-header>
-          <p>{{ task.descricao }}</p>
+          <p class="task-descricao">{{ task.descricao }}</p>
         </mat-expansion-panel>
       }
     </mat-accordion>
+
+    @if (tarefasVisiveis().length === 0) {
+      <p class="sem-resultado">
+        Nenhuma tarefa nesta categoria.
+        <button mat-button (click)="limparFiltro()">Ver todas</button>
+      </p>
+    }
+
     <button mat-flat-button (click)="cadastrarTarefa()">+ Adicionar Tarefa 📑</button>
   }
 </section>

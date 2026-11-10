@@ -34,6 +34,77 @@
     }
   }
 
+  .tasks-resumo {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    width: 90%;
+    margin: 1rem 5% 0;
+
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .resumo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 12px 8px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    font: inherit;
+    transition:
+      transform 0.15s,
+      border-color 0.15s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &.ativo {
+      border-color: currentColor;
+    }
+
+    .resumo-numero {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .resumo-rotulo {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    &[data-grupo='PENDENTE'] {
+      background: #fff3cd;
+      color: #7a5b00;
+    }
+
+    &[data-grupo='NOTIFICADO'] {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    &[data-grupo='CONCLUIDA'] {
+      background: #e2e3e5;
+      color: #41464b;
+    }
+
+    &[data-grupo='CANCELADO'] {
+      background: #f8d7da;
+      color: #842029;
+    }
+  }
+
+  .sem-resultado {
+    text-align: center;
+    font-weight: 500;
+  }
+
   .tasks-title {
     white-space: nowrap;
   }
@@ -69,6 +140,11 @@
       color: #842029;
     }
 
+    &.status-concluida {
+      background: #e2e3e5;
+      color: #41464b;
+    }
+
     &.status-desconhecido {
       background: #e2e3e5;
       color: #41464b;
@@ -78,6 +154,18 @@
   .tasks-exp {
     margin: 1rem 5%;
     padding: 1%;
+  }
+
+  .tasks-exp.task-concluida {
+    .tasks-title,
+    .task-info,
+    .task-descricao {
+      opacity: 0.5;
+    }
+
+    .tasks-title {
+      text-decoration: line-through;
+    }
   }
 
   .task-action-button {

@@ -16,3 +16,11 @@ export interface TaskPayload {
   descricao: string;
   dataEvento: string;
 }
+
+export type GrupoTarefa = 'PENDENTE' | 'NOTIFICADO' | 'CONCLUIDA' | 'CANCELADO';
+
+export interface TaskView extends Task {
+  concluida: boolean;
+  podeReabrir: boolean;
+  grupo: GrupoTarefa;
+}

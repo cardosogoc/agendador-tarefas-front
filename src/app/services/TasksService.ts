@@ -6,6 +6,8 @@ import { Auth } from './AuthService';
 import { Task, TaskPayload } from '../models/task.model';
 import { API_URL } from '../core/api';
 
+const CONCLUIDAS_KEY = 'tasks_concluidas';
+
 @Injectable({ providedIn: 'root' })
 export class TasksService {
   private apiUrl = API_URL;
@@ -14,6 +16,33 @@ export class TasksService {
 
   private _tasks = signal<Task[] | null>(null);
   readonly tasks = this._tasks.asReadonly();
+
+  private _concluidas = signal<Set<string>>(this.lerConcluidas());
+  readonly concluidas = this._concluidas.asReadonly();
+
+  concluir(id: string): void {
+    this.salvarConcluidas(new Set(this._concluidas()).add(id));
+  }
+
+  reabrir(id: string): void {
+    const ids = new Set(this._concluidas());
+    if (ids.delete(id)) {
+      this.salvarConcluidas(ids);
+    }
+  }
+
+  private lerConcluidas(): Set<string> {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(CONCLUIDAS_KEY) ?? '[]'));
+    } catch {
+      return new Set();
+    }
+  }
+
+  private salvarConcluidas(ids: Set<string>): void {
+    this._concluidas.set(ids);
+    localStorage.setItem(CONCLUIDAS_KEY, JSON.stringify([...ids]));
+  }
 
   constructor() {
     // carrega ao logar e limpa ao deslogar
@@ -59,8 +88,13 @@ export class TasksService {
   }
 
   deleteTask(id: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.apiUrl}/tarefas?id=${id}`, { headers: this.getHeaders() })
-      .pipe(tap(() => this.loadTasks()));
-  }
+  return this.http
+    .delete<void>(`${this.apiUrl}/tarefas?id=${id}`, { headers: this.getHeaders() })
+    .pipe(
+      tap(() => {
+        this.reabrir(id);
+        this.loadTasks();
+      }),
+    );
+}
 }
