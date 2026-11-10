@@ -1,16 +1,35 @@
-<div class="home-hero">
-  <div class="hero-text">
-    <h1>Organize suas tarefas de forma simples e poderosa</h1>
-    <p>
-      Tenha mais produtivadade e clareza no seu dia-a-dia com o nosso Agendador de Tarefas
-      inteligente
-    </p>
-    <div class="hero-actions">
-      <button mat-raised-button routerLink="/register">Comece Agora</button>
-      <button mat-raised-button routerLink="/login">Já possuo cadastro</button>
+<div class="home">
+
+
+  <section class="home-passos" aria-labelledby="titulo-passos">
+    <h2 id="titulo-passos">Como funciona</h2>
+    <ol class="passos-lista">
+      @for (passo of passos; track passo.numero) {
+        <li class="passo">
+          <span class="passo-numero">{{ passo.numero }}</span>
+          <h3>{{ passo.titulo }}</h3>
+          <p>{{ passo.texto }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="home-recursos" aria-labelledby="titulo-recursos">
+    <h2 id="titulo-recursos">Tudo o que você precisa para não perder nenhum compromisso</h2>
+    <div class="recursos-grade">
+      @for (recurso of recursos; track recurso.titulo) {
+        <article class="recurso">
+          <mat-icon class="recurso-icone">{{ recurso.icone }}</mat-icon>
+          <h3>{{ recurso.titulo }}</h3>
+          <p>{{ recurso.texto }}</p>
+        </article>
+      }
     </div>
-  </div>
-  <div class="hero-image">
-    <img [src]="imgHero" />
-  </div>
+  </section>
+
+  <section class="home-cta">
+    <h2>Pronto para organizar o seu dia?</h2>
+    <p>Crie sua conta e cadastre sua primeira tarefa em poucos minutos.</p>
+    <a matButton="filled" routerLink="/register">Criar minha conta</a>
+  </section>
 </div>
