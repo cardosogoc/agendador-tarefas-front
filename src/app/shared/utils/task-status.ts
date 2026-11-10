@@ -6,6 +6,9 @@ const STATUS: Record<StatusNotificacao, { texto: string; classe: string }> = {
   CANCELADO: { texto: 'Cancelada', classe: 'status-cancelado' },
 };
 
-export function statusExibicao(status?: StatusNotificacao) {
+export function statusExibicao(status?: StatusNotificacao, concluida = false) {
+  if (concluida) {
+    return { texto: 'Concluída', classe: 'status-concluida' };
+  }
   return (status && STATUS[status]) ?? { texto: '—', classe: 'status-desconhecido' };
 }

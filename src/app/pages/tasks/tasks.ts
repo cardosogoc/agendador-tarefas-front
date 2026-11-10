@@ -1,23 +1,23 @@
-import { API_URL } from './../../core/api';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { Observable, filter, map, switchMap } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable, filter, map, switchMap, tap, timer } from 'rxjs';
 import { DialogField, ModalDialog } from '../../shared/components/modal-dialog/modal-dialog';
 import { TasksService } from '../../services/TasksService';
 import { Toast } from '../../services/ToastService';
 import { Confirm } from '../../services/ConfirmService';
-import { Task, TaskPayload } from '../../models/task.model';
+import { Task, TaskPayload, TaskView } from '../../models/task.model';
 import { exibirDataEvento, lerDataEvento, montarDataEvento } from '../../shared/utils/date.utils';
 import { statusExibicao } from '../../shared/utils/task-status';
-import { Validators } from '@angular/forms';
-
 
 @Component({
-  imports: [MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule],
+  imports: [MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatTooltipModule],
   selector: 'app-tasks',
   styleUrl: './tasks.scss',
   templateUrl: './tasks.html',
@@ -36,6 +36,36 @@ export class Tasks {
   readonly dataEventoExibicao = exibirDataEvento;
   readonly statusExibicao = statusExibicao;
 
+  /** Relógio da tela: a cada 30s a lista é reavaliada e tarefas vencidas descem. */
+  private agora = toSignal(
+    timer(0, 30_000).pipe(map(() => Date.now())),
+    { initialValue: Date.now() },
+  );
+
+  /** Pendentes da mais próxima para a mais distante; concluídas no fim, a mais recente primeiro. */
+  readonly tarefasOrdenadas = computed<TaskView[]>(() => {
+    const agora = this.agora();
+    const marcadas = this.taskService.concluidas();
+
+    return (this.tasks() ?? [])
+      .map((task) => {
+        const data = lerDataEvento(task.dataEvento).getTime();
+        const vencida = data <= agora;
+        const manual = marcadas.has(task.id);
+
+        return {
+          data,
+          view: { ...task, concluida: vencida || manual, podeReabrir: manual && !vencida },
+        };
+      })
+      .sort(
+        (a, b) =>
+          Number(a.view.concluida) - Number(b.view.concluida) ||
+          (a.view.concluida ? b.data - a.data : a.data - b.data),
+      )
+      .map((item) => item.view);
+  });
+
   hasTasks = () => (this.tasks() ?? []).length > 0;
 
   cadastrarTarefa(): void {
@@ -49,11 +79,32 @@ export class Tasks {
 
   editarTarefa(tarefa: Task): void {
     this.abrirFormulario('Editar Tarefa:', tarefa)
-      .pipe(switchMap((payload) => this.taskService.editTask(tarefa.id, payload)))
+      .pipe(
+        switchMap((payload) =>
+          this.taskService.editTask(tarefa.id, payload).pipe(
+            tap(() => {
+              // mudou dia ou horário: a marcação manual sai e a tarefa volta a valer pela data
+              if (payload.dataEvento.slice(0, 16) !== tarefa.dataEvento.slice(0, 16)) {
+                this.taskService.reabrir(tarefa.id);
+              }
+            }),
+          ),
+        ),
+      )
       .subscribe({
         next: () => this.toast.success('Tarefa editada com sucesso'),
         error: () => this.toast.error('Erro ao editar a Tarefa'),
       });
+  }
+
+  alternarConcluida(tarefa: TaskView): void {
+    if (tarefa.podeReabrir) {
+      this.taskService.reabrir(tarefa.id);
+      this.toast.success('Tarefa reaberta');
+    } else {
+      this.taskService.concluir(tarefa.id);
+      this.toast.success('Tarefa marcada como concluída');
+    }
   }
 
   deletarTarefa(tarefa: Task): void {

@@ -16,3 +16,8 @@ export interface TaskPayload {
   descricao: string;
   dataEvento: string;
 }
+
+export interface TaskView extends Task {
+  concluida: boolean;
+  podeReabrir: boolean;
+}

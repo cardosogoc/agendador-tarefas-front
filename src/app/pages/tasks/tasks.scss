@@ -54,6 +54,11 @@
     font-weight: 500;
     white-space: nowrap;
 
+    &.status-concluida {
+      background: #e2e3e5;
+      color: #41464b;
+    }
+
     &.status-pendente {
       background: #fff3cd;
       color: #7a5b00;
@@ -78,6 +83,18 @@
   .tasks-exp {
     margin: 1rem 5%;
     padding: 1%;
+
+    .tasks-exp.task-concluida {
+      .tasks-title,
+      .task-info,
+      .task-descricao {
+        opacity: 0.5;
+      }
+
+      .tasks-title {
+        text-decoration: line-through;
+      }
+    }
   }
 
   .task-action-button {
