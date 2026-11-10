@@ -13,8 +13,25 @@
       </mat-card-content>
     </mat-card>
   } @else {
+    <div class="tasks-resumo">
+      @for (item of resumo; track item.grupo) {
+        <button
+          type="button"
+          class="resumo-card"
+          [attr.data-grupo]="item.grupo"
+          [class.ativo]="filtro() === item.grupo"
+          [attr.aria-pressed]="filtro() === item.grupo"
+          (click)="alternarFiltro(item.grupo)"
+        >
+          <mat-icon>{{ item.icone }}</mat-icon>
+          <span class="resumo-numero">{{ contagem()[item.grupo] }}</span>
+          <span class="resumo-rotulo">{{ item.rotulo }}</span>
+        </button>
+      }
+    </div>
+
     <mat-accordion class="tasks-accordion full-width">
-      @for (task of tarefasOrdenadas(); track task.id) {
+      @for (task of tarefasVisiveis(); track task.id) {
         @let status = statusExibicao(task.statusNotificacaoEnum, task.concluida);
         <mat-expansion-panel
           class="tasks-exp"
@@ -64,6 +81,14 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
+
+    @if (tarefasVisiveis().length === 0) {
+      <p class="sem-resultado">
+        Nenhuma tarefa nesta categoria.
+        <button mat-button (click)="limparFiltro()">Ver todas</button>
+      </p>
+    }
+
     <button mat-flat-button (click)="cadastrarTarefa()">+ Adicionar Tarefa 📑</button>
   }
 </section>

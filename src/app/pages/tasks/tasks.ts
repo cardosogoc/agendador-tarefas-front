@@ -12,7 +12,7 @@ import { DialogField, ModalDialog } from '../../shared/components/modal-dialog/m
 import { TasksService } from '../../services/TasksService';
 import { Toast } from '../../services/ToastService';
 import { Confirm } from '../../services/ConfirmService';
-import { Task, TaskPayload, TaskView } from '../../models/task.model';
+import { GrupoTarefa, Task, TaskPayload, TaskView } from '../../models/task.model';
 import { exibirDataEvento, lerDataEvento, montarDataEvento } from '../../shared/utils/date.utils';
 import { statusExibicao } from '../../shared/utils/task-status';
 
@@ -36,6 +36,17 @@ export class Tasks {
   readonly dataEventoExibicao = exibirDataEvento;
   readonly statusExibicao = statusExibicao;
 
+  /** Cards de resumo. Para tirar um card, apague a linha dele. */
+  readonly resumo: { grupo: GrupoTarefa; rotulo: string; icone: string }[] = [
+    { grupo: 'PENDENTE', rotulo: 'Pendentes', icone: 'hourglass_empty' },
+    { grupo: 'NOTIFICADO', rotulo: 'Notificadas', icone: 'mark_email_read' },
+    { grupo: 'CONCLUIDA', rotulo: 'Concluídas', icone: 'task_alt' },
+    { grupo: 'CANCELADO', rotulo: 'Canceladas', icone: 'cancel' },
+  ];
+
+  /** Filtro ativo; null mostra todas. */
+  readonly filtro = signal<GrupoTarefa | null>(null);
+
   /** Relógio da tela: a cada 30s a lista é reavaliada e tarefas vencidas descem. */
   private agora = toSignal(
     timer(0, 30_000).pipe(map(() => Date.now())),
@@ -52,10 +63,20 @@ export class Tasks {
         const data = lerDataEvento(task.dataEvento).getTime();
         const vencida = data <= agora;
         const manual = marcadas.has(task.id);
+        const cancelada = task.statusNotificacaoEnum === 'CANCELADO';
+        const concluida = cancelada || vencida || manual;
+
+        const grupo: GrupoTarefa = cancelada
+          ? 'CANCELADO'
+          : concluida
+            ? 'CONCLUIDA'
+            : task.statusNotificacaoEnum === 'NOTIFICADO'
+              ? 'NOTIFICADO'
+              : 'PENDENTE';
 
         return {
           data,
-          view: { ...task, concluida: vencida || manual, podeReabrir: manual && !vencida },
+          view: { ...task, concluida, podeReabrir: manual && !vencida && !cancelada, grupo },
         };
       })
       .sort(
@@ -66,7 +87,34 @@ export class Tasks {
       .map((item) => item.view);
   });
 
+  /** Quantas tarefas há em cada grupo (sempre sobre a lista inteira, sem filtro). */
+  readonly contagem = computed(() => {
+    const total: Record<GrupoTarefa, number> = {
+      PENDENTE: 0,
+      NOTIFICADO: 0,
+      CONCLUIDA: 0,
+      CANCELADO: 0,
+    };
+    this.tarefasOrdenadas().forEach((task) => total[task.grupo]++);
+    return total;
+  });
+
+  /** A lista que aparece na tela: ordenada e já filtrada. */
+  readonly tarefasVisiveis = computed(() => {
+    const grupo = this.filtro();
+    const todas = this.tarefasOrdenadas();
+    return grupo ? todas.filter((task) => task.grupo === grupo) : todas;
+  });
+
   hasTasks = () => (this.tasks() ?? []).length > 0;
+
+  alternarFiltro(grupo: GrupoTarefa): void {
+    this.filtro.update((atual) => (atual === grupo ? null : grupo));
+  }
+
+  limparFiltro(): void {
+    this.filtro.set(null);
+  }
 
   cadastrarTarefa(): void {
     this.abrirFormulario('Adicionar Tarefa:')

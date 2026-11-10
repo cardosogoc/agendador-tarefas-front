@@ -7,6 +7,9 @@ const STATUS: Record<StatusNotificacao, { texto: string; classe: string }> = {
 };
 
 export function statusExibicao(status?: StatusNotificacao, concluida = false) {
+  if (status === 'CANCELADO') {
+    return STATUS.CANCELADO;
+  }
   if (concluida) {
     return { texto: 'Concluída', classe: 'status-concluida' };
   }
