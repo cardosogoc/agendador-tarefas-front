@@ -1,27 +1,51 @@
 <mat-toolbar class="app-top-menu-toolbar">
-  <span class="logo">
-    <a href="/">
-      <img [src]="appLogo" alt="Logo" class="logo-img" />
-    </a>
-  </span>
+  <a class="logo" routerLink="/">
+    <img [src]="appLogo" alt="Agendador de Tarefas" class="logo-img" />
+  </a>
+
+  <span class="spacer"></span>
 
   @if (!estaLogado) {
-    <span class="spacer"></span>
-    <button mat-button class="ent-button" [disabled]="estaNaRotaLogin()" routerLink="/login">
-      Entrar
-    </button>
-    <button mat-flat-button [disabled]="estaNaRotaRegister()" routerLink="/register">
-      Cadastrar-se
-    </button>
-  }
+    <nav class="menu-acoes">
+      <button
+        matButton
+        class="link-button"
+        [disabled]="estaNaRotaLogin()"
+        routerLink="/login"
+      >
+        Entrar
+      </button>
+      <button
+        matButton="filled"
+        class="cta-button"
+        [disabled]="estaNaRotaRegister()"
+        routerLink="/register"
+      >
+        Cadastrar-se
+      </button>
+    </nav>
+  } @else {
+    <nav class="menu-acoes">
+      <a class="nav-link" routerLink="/tasks" routerLinkActive="ativo">Minhas tarefas</a>
+      <button
+        type="button"
+        class="avatar-button"
+        [matMenuTriggerFor]="menu"
+        aria-label="Menu do usuário"
+      >
+        <span class="user-avatar">{{ pegarInicialUsuario() }}</span>
+      </button>
+    </nav>
 
-  @if (estaLogado) {
-    <button matButton [matMenuTriggerFor]="menu">
-      <div mat-card-avatar class="user-avatar">{{ pegarInicialUsuario() }}</div>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLink="/user-data">Perfil</button>
-      <button mat-menu-item (click)="logout()">Sair</button>
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button mat-menu-item routerLink="/user-data">
+        <mat-icon>person</mat-icon>
+        <span>Perfil</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sair</span>
+      </button>
     </mat-menu>
   }
 </mat-toolbar>

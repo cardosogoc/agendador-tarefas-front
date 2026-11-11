@@ -1,45 +1,87 @@
 .app-top-menu-toolbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
+  gap: 1rem;
+  padding: 0 1.5rem;
+  background: #e2e2e2;
+  color: rgb(92, 91, 91);
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgb(0 0 0 / 0.08);
 
-.app-top-menu-toolbar .logo {
-  display: flex;
-  align-items: center;
-}
+  .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
 
-.app-top-menu-toolbar a {
-  text-decoration: none;
-  margin: 0 8px;
-}
+  .logo-img {
+    display: block;
+    height: 48px;
+    width: auto;
+  }
 
-.app-top-menu-toolbar .logo-img {
-  height: 60px;
-  width: auto;
-  max-width: 100%;
-  display: block;
-}
+  .spacer {
+    flex: 1 1 auto;
+  }
 
-.app-top-menu-toolbar .spacer {
-  flex: 1 1 auto;
-}
+  .menu-acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-.app-top-menu-toolbar button {
-  border-radius: 0px;
-  height: 100%;
-}
+  .nav-link {
+    padding: 0 0.75rem;
+    color: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
 
-.user-avatar {
-  background-color: rgb(5, 70, 255);
-  color: white;
-  font-weight: 600;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
+    &:hover,
+    &.ativo {
+      color: rgb(5, 70, 255);
+    }
+  }
+
+  .link-button {
+    --mat-button-text-label-text-color: rgb(92, 91, 91);
+
+    &:hover:not(:disabled) {
+      --mat-button-text-label-text-color: rgb(5, 70, 255);
+    }
+  }
+
+  .cta-button {
+    --mat-button-filled-container-color: rgb(5, 70, 255);
+    --mat-button-filled-label-text-color: #fff;
+    --mat-button-filled-container-shape: 20px;
+  }
+
+  .avatar-button {
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+
+  .user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgb(5, 70, 255);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 1rem;
+
+    .logo-img {
+      height: 40px;
+    }
+  }
 }

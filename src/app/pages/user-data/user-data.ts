@@ -1,56 +1,45 @@
-import { Component, effect, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, filter, switchMap } from 'rxjs';
 import { Endereco, Telefone } from '../../models/user.models';
-import { Auth } from '../../services/AuthService';
 import { Confirm } from '../../services/ConfirmService';
 import { Toast } from '../../services/ToastService';
 import { User } from '../../services/UserService';
 import { DialogField, ModalDialog } from '../../shared/components/modal-dialog/modal-dialog';
 
 @Component({
-  imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatListModule,
-    MatIconModule,
-    MatTooltipModule,
-  ],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, MatTooltipModule],
   selector: 'app-user-data',
   styleUrl: './user-data.scss',
   templateUrl: './user-data.html',
 })
 export class UserData {
-  private formBuilder = inject(FormBuilder);
   private userService = inject(User);
   private confirm = inject(Confirm);
   private toast = inject(Toast);
-  readonly dialog = inject(MatDialog);
-  readonly authService = inject(Auth);
+  private dialog = inject(MatDialog);
 
-  user = this.userService.user;
+  readonly user = this.userService.user;
 
-  form = this.formBuilder.group({
-    nome: [{ value: '', disabled: true }],
-    email: [{ value: '', disabled: true }],
-  });
+  readonly inicial = computed(() => this.user()?.nome?.charAt(0).toUpperCase() ?? '?');
 
-  constructor() {
-    effect(() => {
-      const user = this.user();
-      this.form.patchValue({ nome: user?.nome ?? '', email: user?.email ?? '' });
-    });
+  /** 97010000 vira 97010-000 */
+  formatarCep(cep: string): string {
+    const numeros = (cep ?? '').replace(/\D/g, '');
+    return numeros.length === 8 ? `${numeros.slice(0, 5)}-${numeros.slice(5)}` : cep;
+  }
+
+  /** 999998888 vira 99999-8888 e 33334444 vira 3333-4444 */
+  formatarTelefone(numero: string): string {
+    const n = (numero ?? '').replace(/\D/g, '');
+    if (n.length === 9) return `${n.slice(0, 5)}-${n.slice(5)}`;
+    if (n.length === 8) return `${n.slice(0, 4)}-${n.slice(4)}`;
+    return numero;
   }
 
   // ---------- Endereço ----------

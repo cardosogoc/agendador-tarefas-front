@@ -1,47 +1,75 @@
-<div class="register-component">
-  <form [formGroup]="form">
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header class="padding-m">
-        <mat-card-title>Cadastro de Usuário</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field class="full-width">
-          <mat-label>Nome Completo</mat-label>
-          <input matInput formControlName="nome" placeholder="Digite seu Nome Completo" />
-          @if (fullNameErros) {
-            <mat-error>{{ fullNameErros }}</mat-error>
-          }
-        </mat-form-field>
+<div class="auth-component">
+  <section class="auth-brand" aria-hidden="true">
+    <h2>Comece a organizar o seu dia</h2>
+    <p>Crie sua conta e receba um aviso por e-mail antes de cada tarefa.</p>
+    <img [src]="imgHero" alt="" />
+  </section>
 
-        <mat-form-field class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" placeholder="Digite seu Email" />
-          @if (emailErros) {
-            <mat-error>{{ emailErros }}</mat-error>
-          }
-        </mat-form-field>
+  <section class="auth-painel">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      <mat-card class="auth-card" appearance="outlined">
+        <mat-card-content>
+          <div class="auth-header">
+            <span class="auth-logo"><mat-icon>person_add</mat-icon></span>
+            <h1>Crie sua conta</h1>
+            <p>É rápido: só nome, e-mail e senha.</p>
+          </div>
 
-        <input-password-field
-          [placeholder]="'Cadastre a sua senha'"
-          [control]="passwordControl"
-          class="full-width"
-        ></input-password-field>
-      </mat-card-content>
-      <mat-card-actions>
-        <button
-          matButton="outlined"
-          class="full-width"
-          (click)="submit()"
-          [disabled]="form.invalid || isLoading"
-        >
-          <span class="cad-button-content">
-            {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
-            @if (isLoading) {
-              <mat-spinner diameter="20"></mat-spinner>
+          <mat-form-field class="full-width">
+            <mat-label>Nome Completo</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input
+              matInput
+              formControlName="nome"
+              placeholder="Digite seu Nome Completo"
+              autocomplete="name"
+            />
+            @if (fullNameErros) {
+              <mat-error>{{ fullNameErros }}</mat-error>
             }
-          </span>
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </form>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix>mail</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="Digite seu Email"
+              autocomplete="email"
+            />
+            @if (emailErros) {
+              <mat-error>{{ emailErros }}</mat-error>
+            }
+          </mat-form-field>
+
+          <input-password-field
+            [placeholder]="'Cadastre a sua senha'"
+            [control]="passwordControl"
+            class="full-width"
+          ></input-password-field>
+
+          <button
+            matButton="filled"
+            type="submit"
+            class="auth-botao full-width"
+            [disabled]="isLoading"
+          >
+            <span class="cad-button-content">
+              {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
+              @if (isLoading) {
+                <mat-spinner diameter="20"></mat-spinner>
+              }
+            </span>
+          </button>
+
+          <div class="auth-links">
+            <span>Já tem conta? <a routerLink="/login">Entrar</a></span>
+            <a class="voltar" routerLink="/">← Voltar ao início</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+  </section>
 </div>

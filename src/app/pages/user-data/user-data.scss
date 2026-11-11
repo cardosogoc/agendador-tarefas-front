@@ -1,31 +1,152 @@
-.user-data-card {
-  max-width: 600px;
+.perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: min(720px, 100% - 2rem);
   margin: 2rem auto;
-  padding: 1rem;
+}
 
-  h3 {
-    margin-bottom: 0;
+/* ---------- topo ---------- */
+.perfil-topo {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: var(--mat-sys-primary-container, #eaddff);
+  color: var(--mat-sys-on-primary-container, #21005d);
+}
+
+.perfil-avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgb(5, 70, 255);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.perfil-identidade {
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
   }
 
-  .profile-header {
-    padding: 0 1rem;
-
-    .profile-title {
-      padding-bottom: 1rem;
-    }
-  }
-
-  .item-wrapper {
+  p {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 6px;
+    margin: 4px 0 0;
+    opacity: 0.85;
+    overflow-wrap: anywhere;
 
-    .item-text {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    mat-icon {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
     }
+  }
+}
+
+/* ---------- seções ---------- */
+.perfil-secao {
+  padding: 1.25rem;
+  border: 1px solid var(--mat-sys-outline-variant, #cac4d0);
+  border-radius: 20px;
+  background: var(--mat-sys-surface, #fff);
+}
+
+.secao-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  button {
+    --mat-button-outlined-container-shape: 20px;
+  }
+}
+
+/* ---------- itens ---------- */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 14px;
+  background: var(--mat-sys-surface-container-low, #f7f2fa);
+
+  & + .item {
+    margin-top: 0.5rem;
+  }
+}
+
+.item-icone {
+  flex: none;
+  box-sizing: content-box;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary-container, #eaddff);
+  color: rgb(5, 70, 255);
+}
+
+.item-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  span {
+    font-size: 0.9rem;
+    opacity: 0.75;
+    overflow-wrap: anywhere;
+  }
+}
+
+.item-acoes {
+  flex: none;
+  display: flex;
+}
+
+.vazio {
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .perfil-topo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .perfil-identidade p {
+    justify-content: center;
   }
 }
