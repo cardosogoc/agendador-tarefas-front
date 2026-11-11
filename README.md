@@ -6,6 +6,8 @@ Interface web do **Agendador de Tarefas**, desenvolvida em **Angular** com **Typ
 
 ---
 
+Link da Demonstração do Projeto: https://www.youtube.com/watch?v=nDytDSMXsBw&list=PLXh1WFl06-sg
+
 ## ✨ Funcionalidades
 
 - Cadastro de usuário
@@ -117,7 +119,7 @@ src/
 
 ## 📌 Status do projeto
 
-🚧 **Em fase final.** A maior parte das funcionalidades está concluída; estou realizando alguns ajustes finais.
+🚧 **Concluído.**
 
 ---
 
