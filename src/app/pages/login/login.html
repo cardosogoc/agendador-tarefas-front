@@ -1,34 +1,60 @@
-<div class="login-component">
-  <form [formGroup]="form">
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header class="padding-m">
-        <mat-card-title>Login de Usuário</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" placeholder="Digite seu Email" />
-          @if (emailErros) {
-            <mat-error>{{ emailErros }}</mat-error>
-          }
-        </mat-form-field>
-        <input-password-field [control]="passwordControl" class="full-width"></input-password-field>
-      </mat-card-content>
-      <mat-card-actions>
-        <button
-          matButton="outlined"
-          class="full-width"
-          (click)="submit()"
-          [disabled]="form.invalid || isLoading"
-        >
-          <span class="cad-button-content">
-            {{ isLoading ? 'Entrando...' : 'Entrar' }}
-            @if (isLoading) {
-              <mat-spinner diameter="20"></mat-spinner>
+<div class="auth-component">
+  <section class="auth-brand" aria-hidden="true">
+    <h2>Organize o seu dia</h2>
+    <p>Agende suas tarefas e receba um aviso por e-mail antes do horário.</p>
+    <img [src]="imgHero" alt="" />
+  </section>
+
+  <section class="auth-painel">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      <mat-card class="auth-card" appearance="outlined">
+        <mat-card-content>
+          <div class="auth-header">
+            <span class="auth-logo"><mat-icon>event_available</mat-icon></span>
+            <h1>Bem-vindo de volta</h1>
+            <p>Entre para ver as suas tarefas.</p>
+          </div>
+
+          <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix>mail</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="Digite seu Email"
+              autocomplete="email"
+            />
+            @if (emailErros) {
+              <mat-error>{{ emailErros }}</mat-error>
             }
-          </span>
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </form>
+          </mat-form-field>
+
+          <input-password-field
+            [control]="passwordControl"
+            class="full-width"
+          ></input-password-field>
+
+          <button
+            matButton="filled"
+            type="submit"
+            class="auth-botao full-width"
+            [disabled]="isLoading"
+          >
+            <span class="cad-button-content">
+              {{ isLoading ? 'Entrando...' : 'Entrar' }}
+              @if (isLoading) {
+                <mat-spinner diameter="20"></mat-spinner>
+              }
+            </span>
+          </button>
+
+          <div class="auth-links">
+            <span>Ainda não tem conta? <a routerLink="/register">Cadastre-se</a></span>
+            <a class="voltar" routerLink="/">← Voltar ao início</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+  </section>
 </div>

@@ -10,12 +10,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { PasswordField } from '../../shared/components/password-field/password-field';
 import { User } from '../../services/UserService';
 import { Auth } from '../../services/AuthService';
 import { Toast } from '../../services/ToastService';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   imports: [
@@ -23,12 +24,14 @@ import { Toast } from '../../services/ToastService';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     PasswordField,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   selector: 'app-register',
-  styleUrl: './register.scss',
+  styleUrl: '../../shared/styles/auth.scss',
   templateUrl: './register.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -40,6 +43,7 @@ export class Register implements OnInit {
   private toast = inject(Toast);
 
   isLoading = false;
+  readonly imgHero = 'assets/tarefas-lo.jpg';
 
   form = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3)]],

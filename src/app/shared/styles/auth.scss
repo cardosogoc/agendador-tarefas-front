@@ -1,0 +1,187 @@
+/* O elemento de fora também precisa ocupar o espaço entre o menu e o footer */
+app-login,
+app-register {
+  display: flex;
+  flex: 1;
+}
+
+.auth-component {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+
+    .auth-brand {
+      display: none;
+    }
+  }
+
+  /* ---------- painel da esquerda ---------- */
+  .auth-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: var(--mat-sys-primary-container, #eaddff);
+    color: var(--mat-sys-on-primary-container, #21005d);
+
+    h2 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      max-width: 360px;
+      opacity: 0.85;
+    }
+
+    img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      margin-top: 1rem;
+      border-radius: 24px;
+      box-shadow: 0 12px 32px rgb(0 0 0 / 0.18);
+    }
+  }
+
+  /* ---------- painel do formulário ---------- */
+  .auth-painel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  .auth-form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    box-shadow: none;
+    --mat-card-outlined-container-color: var(--mat-sys-surface);
+    --mat-card-outlined-outline-width: 0;
+  }
+
+  .auth-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.75;
+    }
+  }
+
+  .auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 8px;
+    border-radius: 50%;
+    background: var(--mat-sys-primary-container, #eaddff);
+    color: var(--mat-sys-on-primary-container, #21005d);
+
+    mat-icon {
+      width: 28px;
+      height: 28px;
+      font-size: 28px;
+    }
+  }
+
+  /* ---------- campos ---------- */
+  input-password-field {
+    display: block;
+  }
+
+  mat-form-field {
+    /* raio nos quatro cantos */
+    --mat-form-field-filled-container-shape: 25px;
+    --mdc-filled-text-field-container-shape: 25px;
+
+    /* fundo cinza */
+    --mat-form-field-filled-container-color: var(--mat-sys-surface-container-highest);
+    --mdc-filled-text-field-container-color: var(--mat-sys-surface-container-highest);
+
+    /* remove a linha de baixo (normal, hover e foco) */
+    --mat-form-field-filled-active-indicator-height: 0;
+    --mat-form-field-filled-focus-active-indicator-height: 0;
+    --mdc-filled-text-field-active-indicator-height: 0;
+    --mdc-filled-text-field-focus-active-indicator-height: 0;
+    --mdc-filled-text-field-hover-active-indicator-height: 0;
+
+    /* texto não fica colado na curva */
+    input {
+      padding-left: 8px;
+    }
+  }
+
+  .mdc-text-field--filled {
+    border-radius: 25px !important;
+  }
+
+  /* ---------- botão ---------- */
+  .auth-botao {
+    margin-top: 8px;
+    --mat-button-filled-container-shape: 25px;
+    --mat-button-filled-container-height: 48px;
+  }
+
+  .cad-button-content {
+    display: inline-flex;
+    align-items: center;
+
+    mat-spinner {
+      margin-left: 20px;
+    }
+  }
+
+  /* ---------- links ---------- */
+  .auth-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+
+    a {
+      color: var(--mat-sys-primary);
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .voltar {
+      font-weight: 500;
+      opacity: 0.8;
+    }
+  }
+}

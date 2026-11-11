@@ -10,12 +10,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap, tap } from 'rxjs';
 import { PasswordField } from '../../shared/components/password-field/password-field';
 import { User } from '../../services/UserService';
 import { Auth } from '../../services/AuthService';
 import { Toast } from '../../services/ToastService';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   imports: [
@@ -23,12 +24,14 @@ import { Toast } from '../../services/ToastService';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     PasswordField,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   selector: 'app-login',
-  styleUrl: './login.scss',
+  styleUrl: '../../shared/styles/auth.scss',
   templateUrl: './login.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -40,6 +43,7 @@ export class Login implements OnInit {
   private toast = inject(Toast);
 
   isLoading = false;
+  readonly imgHero = 'assets/tarefas-lo.jpg';
 
   form = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],

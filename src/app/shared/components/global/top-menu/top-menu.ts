@@ -5,7 +5,7 @@ import { MatCardAvatar } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RouterState } from '../../../../core/router/router-state';
 import { Auth } from '../../../../services/AuthService';
 import { User } from '../../../../services/UserService';
@@ -16,7 +16,7 @@ import { User } from '../../../../services/UserService';
     MatButtonModule,
     MatIconModule,
     RouterLink,
-    MatCardAvatar,
+    RouterLinkActive,
     MatMenuModule,
   ],
   selector: 'app-top-menu',
