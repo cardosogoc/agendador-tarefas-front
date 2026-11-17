@@ -1,4 +1,4 @@
-export type StatusNotificacao = 'PENDENTE' | 'NOTIFICADO' | 'CANCELADO';
+export type StatusNotificacao = 'PENDENTE' | 'AGUARDANDO' | 'NOTIFICADO' | 'CANCELADO';
 
 export interface Task {
   id: string;
@@ -17,7 +17,7 @@ export interface TaskPayload {
   dataEvento: string;
 }
 
-export type GrupoTarefa = 'PENDENTE' | 'NOTIFICADO' | 'CONCLUIDA' | 'CANCELADO';
+export type GrupoTarefa = 'PENDENTE'| 'AGUARDANDO' | 'NOTIFICADO' | 'CONCLUIDA' | 'CANCELADO';
 
 export interface TaskView extends Task {
   concluida: boolean;

@@ -36,13 +36,17 @@
 
   .tasks-resumo {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
     width: 90%;
-    margin: 1rem 5% 0;
+    margin: 1rem auto 0;
+
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 
     @media (max-width: 600px) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -86,7 +90,12 @@
 
     &[data-grupo='NOTIFICADO'] {
       background: #d1e7dd;
-      color: #0f5132;
+      color: #0ba85f;
+    }
+
+    &[data-grupo='AGUARDANDO'] {
+      background: #cfe2ff;
+      color: #084298;
     }
 
     &[data-grupo='CONCLUIDA'] {
@@ -110,7 +119,8 @@
   }
 
   .tasks-accordion {
-    margin: 5%;
+    width: 90%;
+    margin: 1.5rem auto;
   }
 
   .task-icon {
@@ -133,6 +143,11 @@
     &.status-notificado {
       background: #d1e7dd;
       color: #0f5132;
+    }
+
+    &.status-aguardando {
+      background: #cfe2ff;
+      color: #084298;
     }
 
     &.status-cancelado {

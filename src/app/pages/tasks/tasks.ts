@@ -39,6 +39,7 @@ export class Tasks {
   /** Cards de resumo. Para tirar um card, apague a linha dele. */
   readonly resumo: { grupo: GrupoTarefa; rotulo: string; icone: string }[] = [
     { grupo: 'PENDENTE', rotulo: 'Pendentes', icone: 'hourglass_empty' },
+    { grupo: 'AGUARDANDO', rotulo: 'Aguardando', icone: 'schedule' },
     { grupo: 'NOTIFICADO', rotulo: 'Notificadas', icone: 'mark_email_read' },
     { grupo: 'CONCLUIDA', rotulo: 'Concluídas', icone: 'task_alt' },
     { grupo: 'CANCELADO', rotulo: 'Canceladas', icone: 'cancel' },
@@ -48,10 +49,9 @@ export class Tasks {
   readonly filtro = signal<GrupoTarefa | null>(null);
 
   /** Relógio da tela: a cada 30s a lista é reavaliada e tarefas vencidas descem. */
-  private agora = toSignal(
-    timer(0, 30_000).pipe(map(() => Date.now())),
-    { initialValue: Date.now() },
-  );
+  private agora = toSignal(timer(0, 30_000).pipe(map(() => Date.now())), {
+    initialValue: Date.now(),
+  });
 
   /** Pendentes da mais próxima para a mais distante; concluídas no fim, a mais recente primeiro. */
   readonly tarefasOrdenadas = computed<TaskView[]>(() => {
@@ -72,7 +72,9 @@ export class Tasks {
             ? 'CONCLUIDA'
             : task.statusNotificacaoEnum === 'NOTIFICADO'
               ? 'NOTIFICADO'
-              : 'PENDENTE';
+              : task.statusNotificacaoEnum === 'AGUARDANDO'
+                ? 'AGUARDANDO'
+                : 'PENDENTE';
 
         return {
           data,
@@ -91,6 +93,7 @@ export class Tasks {
   readonly contagem = computed(() => {
     const total: Record<GrupoTarefa, number> = {
       PENDENTE: 0,
+      AGUARDANDO: 0,
       NOTIFICADO: 0,
       CONCLUIDA: 0,
       CANCELADO: 0,
